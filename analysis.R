@@ -3,8 +3,6 @@ dataset = na.omit(dataset)
 
 dataset$Smoking.status = as.factor(dataset$Smoking.status)
 dataset$Gender = as.factor(dataset$Gender)
-dataset$Awakenings = as.factor(dataset$Awakenings)
-dataset$Exercise.frequency = as.factor(dataset$Exercise.frequency)
 
 dataset
 
@@ -14,7 +12,9 @@ scuffed = lm(Sleep.efficiency ~ Age + Caffeine.consumption +
 summary(scuffed)
 
 resids = scuffed$residuals
+fitted = scuffed$fitted.values
 
-resids_plot = plot(dataset$Sleep.efficiency, resids)
+resids_plot = plot(fitted, resids)
 
 qq_plot = qqnorm(resids)
+qqline(resids)

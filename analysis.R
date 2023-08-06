@@ -18,3 +18,14 @@ resids_plot = plot(fitted, resids)
 
 qq_plot = qqnorm(resids)
 qqline(resids)
+
+
+age_vs_efficiency = lm(Sleep.efficiency ~ Age, data = dataset)
+summary(age_vs_efficiency)
+
+age_vs_duration = lm(Sleep.duration ~ Age, data = dataset)
+summary(age_vs_duration)
+
+
+duration_vs_efficiency = lm(Sleep.efficiency ~ Sleep.duration, data = dataset)
+summary(duration_vs_efficiency)

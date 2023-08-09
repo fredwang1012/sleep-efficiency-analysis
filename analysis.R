@@ -1,6 +1,6 @@
 #Loading Libraries
 library(lubridate)
-
+library(leaps)
 
 #Data preprocessing
 dataset = read.table('Sleep_Efficiency.csv', TRUE, ',')
@@ -28,6 +28,7 @@ dataset$Wakeup.time
 
 
 #Main model selection
+
 full_model = lm(Sleep.efficiency ~ Age + Gender + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
                  Alcohol.consumption + Smoking.status + Exercise.frequency + Bedtime + Wakeup.time, data = dataset)
 summary(full_model)
@@ -40,7 +41,34 @@ title('Plot of Residuals vs Fitted Sleep Efficiency for Full Model')
 
 
 
-optimized = lm(Sleep.efficiency ~ Age + REM.sleep.percentage + Deep.sleep.percentage + Awakenings + Caffeine.consumption +
+#Backwards Selection
+ver2 = lm(Sleep.efficiency ~ Age + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
+            Alcohol.consumption + Smoking.status + Exercise.frequency + Bedtime + Wakeup.time, data = dataset)
+summary(ver2)
+
+ver3 = lm(Sleep.efficiency ~ Age + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
+            Alcohol.consumption + Smoking.status + Exercise.frequency + Wakeup.time, data = dataset)
+summary(ver3)
+
+ver4 = lm(Sleep.efficiency ~ Age + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
+            Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
+summary(ver4)
+
+ver5 = lm(Sleep.efficiency ~ Age + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
+            Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
+summary(ver5)
+
+
+#To choose from REM, deep, light sleep percentage
+mod_sub = regsubsets(Sleep.efficiency ~., data = dataset, method = 'exhaustive')
+ss = summary(mod_sub)
+ss$which
+ss$adjr2
+ss$cp
+ss$rsq
+
+
+optimized = lm(Sleep.efficiency ~ Age + Light.sleep.percentage + Awakenings + Caffeine.consumption +
             Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
 summary(optimized)
 
@@ -55,18 +83,18 @@ qq_plot = qqnorm(optimized_resids, ylab = 'Optimized Model Residuals Sample Quan
 qqline(optimized_resids)
 
 
-#Other relevant models
-age_vs_efficiency = lm(Sleep.efficiency ~ Age, data = dataset)
-summary(age_vs_efficiency)
-plot(dataset$Age, dataset$Sleep.efficiency)
-plot(age_vs_efficiency$fitted.values, age_vs_efficiency$residuals)
-
-age_vs_duration = lm(Sleep.duration ~ Age, data = dataset)
-summary(age_vs_duration)
-plot(dataset$Age, dataset$Sleep.duration)
-plot(age_vs_duration$fitted.values, age_vs_duration$residuals)
-
-duration_vs_efficiency = lm(Sleep.efficiency ~ Sleep.duration, data = dataset)
-summary(duration_vs_efficiency)
-plot(dataset$Sleep.duration, dataset$Sleep.efficiency)
-plot(duration_vs_efficiency$fitted.values, duration_vs_efficiency$residuals)
+# #Other interesting models
+# age_vs_efficiency = lm(Sleep.efficiency ~ Age, data = dataset)
+# summary(age_vs_efficiency)
+# plot(dataset$Age, dataset$Sleep.efficiency)
+# plot(age_vs_efficiency$fitted.values, age_vs_efficiency$residuals)
+# 
+# age_vs_duration = lm(Sleep.duration ~ Age, data = dataset)
+# summary(age_vs_duration)
+# plot(dataset$Age, dataset$Sleep.duration)
+# plot(age_vs_duration$fitted.values, age_vs_duration$residuals)
+# 
+# duration_vs_efficiency = lm(Sleep.efficiency ~ Sleep.duration, data = dataset)
+# summary(duration_vs_efficiency)
+# plot(dataset$Sleep.duration, dataset$Sleep.efficiency)
+# plot(duration_vs_efficiency$fitted.values, duration_vs_efficiency$residuals)

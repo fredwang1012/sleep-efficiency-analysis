@@ -82,6 +82,18 @@ title('Plot of Residuals vs Fitted Sleep Efficiency for Optimized Model')
 qq_plot = qqnorm(optimized_resids, ylab = 'Optimized Model Residuals Sample Quantiles')
 qqline(optimized_resids)
 
+alcohol_drinkers <- subset(dataset, Alcohol.consumption > 0)
+non_alcohol_drinkers <- subset(dataset, Alcohol.consumption == 0)
+
+mean(alcohol_drinkers$Sleep.efficiency)
+mean(non_alcohol_drinkers$Sleep.efficiency)
+
+nrow(subset(dataset, Caffeine.consumption <= 50)) / nrow(dataset)
+
+mean(dataset$Exercise.frequency)
+
+proportions(table(alcohol_drinkers$Smoking.status))
+proportions(table(non_alcohol_drinkers$Smoking.status))
 
 # #Other interesting models
 # age_vs_efficiency = lm(Sleep.efficiency ~ Age, data = dataset)

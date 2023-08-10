@@ -67,6 +67,10 @@ ss$adjr2
 ss$cp
 ss$rsq
 
+plot(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9), ss$cp, xlab = 'Number of Parameters', ylab = "Mallow's Cp")
+abline(0, 1)
+title("Mallow's Cp Plot for Model Selection")
+
 
 optimized = lm(Sleep.efficiency ~ Age + Light.sleep.percentage + Awakenings + Caffeine.consumption +
             Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
@@ -82,6 +86,8 @@ title('Plot of Residuals vs Fitted Sleep Efficiency for Optimized Model')
 qq_plot = qqnorm(optimized_resids, ylab = 'Optimized Model Residuals Sample Quantiles')
 qqline(optimized_resids)
 
+
+
 alcohol_drinkers <- subset(dataset, Alcohol.consumption > 0)
 non_alcohol_drinkers <- subset(dataset, Alcohol.consumption == 0)
 
@@ -94,6 +100,9 @@ mean(dataset$Exercise.frequency)
 
 proportions(table(alcohol_drinkers$Smoking.status))
 proportions(table(non_alcohol_drinkers$Smoking.status))
+
+
+
 
 # #Other interesting models
 # age_vs_efficiency = lm(Sleep.efficiency ~ Age, data = dataset)

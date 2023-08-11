@@ -14,7 +14,7 @@ dataset$Wakeup.time = as.POSIXlt(dataset$Wakeup.time)
 #Turn bedtime into number of hours after 9:00pm
 hours = as.numeric(hour(dataset$Bedtime))
 hours = as.numeric(hours + minute(dataset$Bedtime)/60)
-ifelse(21-hours <= 0, hours - 21, hours + 3)
+hours = ifelse(21-hours <= 0, hours - 21, hours + 3)
 dataset$Bedtime = hours
 dataset$Bedtime
 
@@ -28,6 +28,20 @@ dataset$Wakeup.time
 
 
 #Main model selection
+plot(Sleep.efficiency ~ Age, data = dataset, xlab = 'Age', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Gender, data = dataset, xlab = 'Gender', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Sleep.duration, data = dataset, xlab = 'Sleep Duration', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ REM.sleep.percentage, data = dataset, xlab = 'REM Sleep Percentage', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Deep.sleep.percentage, data = dataset, xlab = 'Deep Sleep Percentage', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Light.sleep.percentage, data = dataset, xlab = 'Light Sleep Percentage', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Awakenings, data = dataset, xlab = 'Awakenings', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Caffeine.consumption, data = dataset, xlab = 'Caffeine Consumption', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Alcohol.consumption, data = dataset, xlab = 'Alcohol Consumption', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Smoking.status, data = dataset, xlab = 'Smoking Status', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Exercise.frequency, data = dataset, xlab = 'Exercise Frequency', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Bedtime, data = dataset, xlab = 'Bedtime', ylab = 'Sleep Efficiency')
+plot(Sleep.efficiency ~ Wakeup.time, data = dataset, xlab = 'Wakeup Time', ylab = 'Sleep Efficiency')
+
 
 full_model = lm(Sleep.efficiency ~ Age + Gender + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
                  Alcohol.consumption + Smoking.status + Exercise.frequency + Bedtime + Wakeup.time, data = dataset)
@@ -38,7 +52,6 @@ fitted = full_model$fitted.values
 
 resids_plot = plot(fitted, resids, xlab = 'Fitted Sleep Efficiency', ylab = 'Residuals')
 title('Plot of Residuals vs Fitted Sleep Efficiency for Full Model')
-
 
 
 #Backwards Selection

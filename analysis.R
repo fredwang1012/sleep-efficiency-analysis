@@ -1,6 +1,8 @@
 #Loading Libraries
 library(lubridate)
 library(leaps)
+library(rsq)
+library(car)
 
 #Data preprocessing
 dataset = read.table('Sleep_Efficiency.csv', TRUE, ',')
@@ -99,6 +101,41 @@ title('Plot of Residuals vs Fitted Sleep Efficiency for Optimized Model')
 qq_plot = qqnorm(optimized_resids, ylab = 'Optimized Model Residuals Sample Quantiles')
 qqline(optimized_resids)
 
+
+
+# Partial R squared and VIF values for the optimized model
+optimized_prsq = rsq.partial(optimized)
+optimized_vif = vif(optimized)
+
+#Sample calculation for partial R squared value of r^2 y,age:x'
+mod_noage = lm(Sleep.efficiency ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +
+                 Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
+optimized_ageprsq = (summary(optimized)$r.squared - summary(mod_noage)$r.squared) / (1 - summary(mod_noage)$r.squared)
+
+#Sample calculation for VIF of age
+mod_justage = lm(Age ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +
+                   Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
+optimized_agevif = 1 / (1 - summary(mod_justage)$r.squared)
+
+
+
+## Optimized model including interaction terms
+optimized_int = lm(Sleep.efficiency ~ Age + Light.sleep.percentage + Awakenings + Caffeine.consumption +
+                     Alcohol.consumption + Smoking.status + Exercise.frequency + 
+                     Awakenings:Alcohol.consumption + Age:Light.sleep.percentage, data = dataset)
+summary(optimized_int)
+
+optimized_int_resids = optimized_int$residuals
+optimized_int_fitted = optimized_int$fitted.values
+
+resids_int_plot = plot(optimized_int_fitted, optimized_int_resids, xlab = 'Fitted Sleep Efficiency', ylab = 'Residuals')
+title('Plot of Residuals vs Fitted Sleep Efficiency for Optimized Model with Interactions')
+
+qq_int_plot = qqnorm(optimized_int_resids, ylab = 'Optimized Model With Interactions Residuals Sample Quantiles')
+qqline(optimized_int_resids)
+
+
+###
 
 
 alcohol_drinkers <- subset(dataset, Alcohol.consumption > 0)

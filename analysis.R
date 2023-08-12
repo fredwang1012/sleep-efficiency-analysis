@@ -169,35 +169,4 @@ leverages <- as.data.frame(hatvalues(optimized_int))
 cookdstes <- as.data.frame(cooks.distance(optimized_int))
 standard_res <- rstandard(optimized_int)
 
-###
 
-
-alcohol_drinkers <- subset(dataset, Alcohol.consumption > 0)
-non_alcohol_drinkers <- subset(dataset, Alcohol.consumption == 0)
-
-mean(alcohol_drinkers$Sleep.efficiency)
-mean(non_alcohol_drinkers$Sleep.efficiency)
-
-nrow(subset(dataset, Caffeine.consumption <= 50)) / nrow(dataset)
-
-mean(dataset$Exercise.frequency)
-
-proportions(table(alcohol_drinkers$Smoking.status))
-proportions(table(non_alcohol_drinkers$Smoking.status))
-
-
-# #Other interesting models
-# age_vs_efficiency = lm(Sleep.efficiency ~ Age, data = dataset)
-# summary(age_vs_efficiency)
-# plot(dataset$Age, dataset$Sleep.efficiency)
-# plot(age_vs_efficiency$fitted.values, age_vs_efficiency$residuals)
-# 
-# age_vs_duration = lm(Sleep.duration ~ Age, data = dataset)
-# summary(age_vs_duration)
-# plot(dataset$Age, dataset$Sleep.duration)
-# plot(age_vs_duration$fitted.values, age_vs_duration$residuals)
-# 
-# duration_vs_efficiency = lm(Sleep.efficiency ~ Sleep.duration, data = dataset)
-# summary(duration_vs_efficiency)
-# plot(dataset$Sleep.duration, dataset$Sleep.efficiency)
-# plot(duration_vs_efficiency$fitted.values, duration_vs_efficiency$residuals)

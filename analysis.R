@@ -1,7 +1,7 @@
 #Loading Libraries
 library(lubridate)
 library(leaps)
-library(rsq)
+# library(rsq)
 library(car)
 
 #Data preprocessing
@@ -55,6 +55,24 @@ fitted = full_model$fitted.values
 resids_plot = plot(fitted, resids, xlab = 'Fitted Sleep Efficiency', ylab = 'Residuals')
 title('Plot of Residuals vs Fitted Sleep Efficiency for Full Model')
 
+# Partial R squared and VIF values for the initial full model
+vif_full_dataset <- dataset[-7][-1]
+age_pr2_full <- summary(lm(Age ~ ., data = vif_full_dataset))$r.squared
+bedtime_pr2_full <- summary(lm(Bedtime ~ ., data = vif_full_dataset))$r.squared
+wakeuptime_pr2_full <- summary(lm(Wakeup.time ~ ., data = vif_full_dataset))$r.squared
+duration_pr2_full <- summary(lm(Sleep.duration ~ ., data = vif_full_dataset))$r.squared
+REM_pr2_full <- summary(lm(REM.sleep.percentage ~ ., data = vif_full_dataset))$r.squared
+deep_pr2_full <- summary(lm(Deep.sleep.percentage ~ ., data = vif_full_dataset))$r.squared
+light_pr2_full <- summary(lm(Light.sleep.percentage ~ ., data = vif_full_dataset))$r.squared
+awakening_pr2_full <- summary(lm(Awakenings ~ ., data = vif_full_dataset))$r.squared
+caffeine_pr2_full <- summary(lm(Caffeine.consumption ~ ., data = vif_full_dataset))$r.squared
+alcohol_pr2_full <- summary(lm(Alcohol.consumption ~ ., data = vif_full_dataset))$r.squared
+exercise_pr2_full <- summary(lm(Exercise.frequency ~ ., data = vif_full_dataset))$r.squared
+pr2_full_model <- c(age_pr2_full, bedtime_pr2_full, wakeuptime_pr2_full, duration_pr2_full, REM_pr2_full,
+                    deep_pr2_full, light_pr2_full, awakening_pr2_full, caffeine_pr2_full, alcohol_pr2_full,
+                    exercise_pr2_full)
+vif_full_model <- 1 / (1 - pr2_full_model)
+
 
 #Backwards Selection
 ver2 = lm(Sleep.efficiency ~ Age + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
@@ -82,6 +100,9 @@ ss$adjr2
 ss$cp
 ss$rsq
 
+plot(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9), ss$adjr2, xlab = 'Number of Parameters', ylab = "Adjusted R2")
+title("Adjusted R2 for Model Selection")
+
 plot(x = c(1, 2, 3, 4, 5, 6, 7, 8, 9), ss$cp, xlab = 'Number of Parameters', ylab = "Mallow's Cp")
 abline(0, 1)
 title("Mallow's Cp Plot for Model Selection")
@@ -103,14 +124,22 @@ qqline(optimized_resids)
 
 
 
-# Partial R squared and VIF values for the optimized model
-optimized_prsq = rsq.partial(optimized)
-optimized_vif = vif(optimized)
+# Partial R squared and VIF values for the intermediate model without interaction
+vif_int_dataset <- dataset[-9][-8][-7][-6][-5][-4][-3][-1]
+age_pr2_int <- summary(lm(Age ~ ., data = vif_int_dataset))$r.squared
+light_pr2_int <- summary(lm(Light.sleep.percentage ~ ., data = vif_int_dataset))$r.squared
+awakening_pr2_int <- summary(lm(Awakenings ~ ., data = vif_int_dataset))$r.squared
+caffeine_pr2_int <- summary(lm(Caffeine.consumption ~ ., data = vif_int_dataset))$r.squared
+alcohol_pr2_int <- summary(lm(Alcohol.consumption ~ ., data = vif_int_dataset))$r.squared
+exercise_pr2_int <- summary(lm(Exercise.frequency ~ ., data = vif_int_dataset))$r.squared
+pr2_int_model <- c(age_pr2_int, light_pr2_int, awakening_pr2_int, caffeine_pr2_int,
+                   alcohol_pr2_int, exercise_pr2_int)
+vif_int_model <- 1 / (1 - pr2_int_model)
 
-#Sample calculation for partial R squared value of r^2 y,age:x'
-mod_noage = lm(Sleep.efficiency ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +
-                 Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
-optimized_ageprsq = (summary(optimized)$r.squared - summary(mod_noage)$r.squared) / (1 - summary(mod_noage)$r.squared)
+# #Sample calculation for partial R squared value of r^2 y,age:x'
+# mod_noage = lm(Sleep.efficiency ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +
+#                  Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
+# optimized_ageprsq = (summary(optimized)$r.squared - summary(mod_noage)$r.squared) / (1 - summary(mod_noage)$r.squared)
 
 #Sample calculation for VIF of age
 mod_justage = lm(Age ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +
@@ -135,6 +164,11 @@ qq_int_plot = qqnorm(optimized_int_resids, ylab = 'Optimized Model With Interact
 qqline(optimized_int_resids)
 
 
+#Leverage and Outlier Checks
+leverages <- as.data.frame(hatvalues(optimized_int))
+cookdstes <- as.data.frame(cooks.distance(optimized_int))
+standard_res <- rstandard(optimized_int)
+
 ###
 
 
@@ -150,8 +184,6 @@ mean(dataset$Exercise.frequency)
 
 proportions(table(alcohol_drinkers$Smoking.status))
 proportions(table(non_alcohol_drinkers$Smoking.status))
-
-
 
 
 # #Other interesting models

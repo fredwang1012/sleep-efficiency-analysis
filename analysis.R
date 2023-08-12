@@ -1,7 +1,6 @@
 #Loading Libraries
 library(lubridate)
 library(leaps)
-# library(rsq)
 library(car)
 
 #Data preprocessing
@@ -136,10 +135,8 @@ pr2_int_model <- c(age_pr2_int, light_pr2_int, awakening_pr2_int, caffeine_pr2_i
                    alcohol_pr2_int, exercise_pr2_int)
 vif_int_model <- 1 / (1 - pr2_int_model)
 
-# #Sample calculation for partial R squared value of r^2 y,age:x'
-# mod_noage = lm(Sleep.efficiency ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +
-#                  Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
-# optimized_ageprsq = (summary(optimized)$r.squared - summary(mod_noage)$r.squared) / (1 - summary(mod_noage)$r.squared)
+
+
 
 #Sample calculation for VIF of age
 mod_justage = lm(Age ~ Light.sleep.percentage + Awakenings + Caffeine.consumption +

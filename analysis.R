@@ -45,7 +45,7 @@ plot(Sleep.efficiency ~ Wakeup.time, data = dataset, xlab = 'Wakeup Time', ylab 
 
 
 full_model = lm(Sleep.efficiency ~ Age + Gender + Sleep.duration + REM.sleep.percentage + Deep.sleep.percentage + Light.sleep.percentage + Awakenings + Caffeine.consumption +
-                 Alcohol.consumption + Smoking.status + Exercise.frequency + Bedtime + Wakeup.time, data = dataset)
+                  Alcohol.consumption + Smoking.status + Exercise.frequency + Bedtime + Wakeup.time, data = dataset)
 summary(full_model)
 
 resids = full_model$residuals
@@ -108,7 +108,7 @@ title("Mallow's Cp Plot for Model Selection")
 
 
 optimized = lm(Sleep.efficiency ~ Age + Light.sleep.percentage + Awakenings + Caffeine.consumption +
-            Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
+                 Alcohol.consumption + Smoking.status + Exercise.frequency, data = dataset)
 summary(optimized)
 
 optimized_resids = optimized$residuals
@@ -165,5 +165,3 @@ qqline(optimized_int_resids)
 leverages <- as.data.frame(hatvalues(optimized_int))
 cookdstes <- as.data.frame(cooks.distance(optimized_int))
 standard_res <- rstandard(optimized_int)
-
-
